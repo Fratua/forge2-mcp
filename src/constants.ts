@@ -1,0 +1,29 @@
+// Shared runtime defaults and protocol constants
+export const DEFAULT_AUTOMATION_HOST = '127.0.0.1';
+export const DEFAULT_AUTOMATION_PORT = 8090;
+export const DEFAULT_AUTOMATION_PORTS = [8090, 8091];
+export const DEFAULT_NEGOTIATED_PROTOCOLS = ['mcp-automation'];
+export const DEFAULT_HEARTBEAT_INTERVAL_MS = 10000;
+export const DEFAULT_HANDSHAKE_TIMEOUT_MS = 5000;
+export const DEFAULT_MAX_PENDING_REQUESTS = 25;
+export const DEFAULT_MAX_QUEUED_REQUESTS = 100;
+export const DEFAULT_TIME_OF_DAY = 9;
+export const DEFAULT_SUN_INTENSITY = 10000;
+export const DEFAULT_SKYLIGHT_INTENSITY = 1;
+
+export const DEFAULT_SCREENSHOT_RESOLUTION = '1920x1080';
+
+// Operation Timeouts
+export const DEFAULT_OPERATION_TIMEOUT_MS = 30000;
+export const DEFAULT_ASSET_OP_TIMEOUT_MS = 60000;
+export const EXTENDED_ASSET_OP_TIMEOUT_MS = 120000;
+export const LONG_RUNNING_OP_TIMEOUT_MS = 300000;
+
+// Command-specific timeouts
+export const CONSOLE_COMMAND_TIMEOUT_MS = 30000;
+export const ENGINE_QUERY_TIMEOUT_MS = 15000;
+export const CONNECTION_TIMEOUT_MS = 15000;
+
+// Message size limits
+export const MAX_WS_MESSAGE_SIZE_BYTES = 5 * 1024 * 1024;
+

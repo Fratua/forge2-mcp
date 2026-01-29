@@ -1,0 +1,28 @@
+name: Greetings
+
+on:
+  pull_request_target:
+    types: [opened]
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Skip for bots and repository owner
+    if: >-
+      github.actor != 'dependabot[bot]' &&
+      github.actor != 'renovate[bot]' &&
+      github.actor != 'github-actions[bot]' &&
+      github.actor != github.repository_owner
+    steps:
+    - uses: actions/first-interaction@1c4688942c71f71d4f5502a26ea67c331730fa4d # v3.1.0
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        issue_message: '👋 Thanks for opening this issue! We appreciate your feedback and report. A maintainer will check this out soon.'
+        pr_message: '👋 Thanks for your first Pull Request! We love contributions. Please ensure you have signed off your commits and followed the contribution guidelines.'

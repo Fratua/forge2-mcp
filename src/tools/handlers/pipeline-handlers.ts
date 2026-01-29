@@ -1,0 +1,194 @@
+import { cleanObject } from '../../utils/safe-json.js';
+import { ITools } from '../../types/tool-interfaces.js';
+import type { PipelineArgs } from '../../types/handler-types.js';
+import { executeAutomationRequest } from './common-handlers.js';
+import { spawn } from 'child_process';
+import path from 'path';
+import fs from 'fs';
+
+function validateUbtArgumentsString(extraArgs: string): void {
+  if (!extraArgs || typeof extraArgs !== 'string') {
+    return;
+  }
+
+  const forbiddenChars = ['\n', '\r', ';', '|', '`', '&&', '||', '>', '<'];
+  for (const char of forbiddenChars) {
+    if (extraArgs.includes(char)) {
+      throw new Error(
+        `UBT arguments contain forbidden character(s) and are blocked for safety. Blocked: ${JSON.stringify(char)}.`
+      );
+    }
+  }
+}
+
+function tokenizeArgs(extraArgs: string): string[] {
+  if (!extraArgs) {
+    return [];
+  }
+
+  const args: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  let escapeNext = false;
+
+  for (let i = 0; i < extraArgs.length; i++) {
+    const ch = extraArgs[i];
+
+    if (escapeNext) {
+      current += ch;
+      escapeNext = false;
+      continue;
+    }
+
+    if (ch === '\\') {
+      escapeNext = true;
+      continue;
+    }
+
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+      continue;
+    }
+
+    if (!inQuotes && /\s/.test(ch)) {
+      if (current.length > 0) {
+        args.push(current);
+        current = '';
+      }
+    } else {
+      current += ch;
+    }
+  }
+
+  if (current.length > 0) {
+    args.push(current);
+  }
+
+  return args;
+}
+
+export async function handlePipelineTools(action: string, args: PipelineArgs, tools: ITools) {
+  switch (action) {
+    case 'run_ubt': {
+      const target = args.target;
+      const platform = args.platform || 'Win64';
+      const configuration = args.configuration || 'Development';
+      const extraArgs = args.arguments || '';
+
+      if (!target) {
+        throw new Error('Target is required for run_ubt');
+      }
+
+      validateUbtArgumentsString(extraArgs);
+
+      let ubtPath = 'UnrealBuildTool';
+      const enginePath = process.env.UE_ENGINE_PATH || process.env.UNREAL_ENGINE_PATH;
+
+      if (enginePath) {
+        const possiblePath = path.join(enginePath, 'Engine', 'Binaries', 'DotNET', 'UnrealBuildTool', 'UnrealBuildTool.exe');
+        if (fs.existsSync(possiblePath)) {
+          ubtPath = possiblePath;
+        }
+      }
+
+      let projectPath = process.env.UE_PROJECT_PATH;
+      if (!projectPath && args.projectPath) {
+        projectPath = args.projectPath;
+      }
+
+      if (!projectPath) {
+        throw new Error('UE_PROJECT_PATH environment variable is not set and no projectPath argument was provided.');
+      }
+
+      let uprojectFile = projectPath;
+      if (!uprojectFile.endsWith('.uproject')) {
+        try {
+          const files = fs.readdirSync(projectPath);
+          const found = files.find(f => f.endsWith('.uproject'));
+          if (found) {
+            uprojectFile = path.join(projectPath, found);
+          }
+        } catch (_e) {
+          throw new Error(`Could not read project directory: ${projectPath}`);
+        }
+      }
+
+      const projectArg = `-Project="${uprojectFile}"`;
+      const extraTokens = tokenizeArgs(extraArgs);
+
+      const cmdArgs = [
+        target,
+        platform,
+        configuration,
+        projectArg,
+        ...extraTokens
+      ];
+
+      return new Promise((resolve) => {
+        const child = spawn(ubtPath, cmdArgs, { shell: false });
+
+        const MAX_OUTPUT_SIZE = 20 * 1024; // 20KB cap
+        let stdout = '';
+        let stderr = '';
+
+        child.stdout.on('data', (data) => {
+          const str = data.toString();
+          process.stderr.write(str); // Stream to server console (stderr to avoid MCP corruption)
+          stdout += str;
+          if (stdout.length > MAX_OUTPUT_SIZE) {
+            stdout = stdout.substring(stdout.length - MAX_OUTPUT_SIZE);
+          }
+        });
+
+        child.stderr.on('data', (data) => {
+          const str = data.toString();
+          process.stderr.write(str); // Stream to server console
+          stderr += str;
+          if (stderr.length > MAX_OUTPUT_SIZE) {
+            stderr = stderr.substring(stderr.length - MAX_OUTPUT_SIZE);
+          }
+        });
+
+        child.on('close', (code) => {
+          const truncatedNote = (stdout.length >= MAX_OUTPUT_SIZE || stderr.length >= MAX_OUTPUT_SIZE)
+            ? '\n[Output truncated for response payload]'
+            : '';
+
+          const quotedArgs = cmdArgs.map(arg => arg.includes(' ') ? `"${arg}"` : arg);
+
+          if (code === 0) {
+            resolve({
+              success: true,
+              message: 'UnrealBuildTool finished successfully',
+              output: stdout + truncatedNote,
+              command: `${ubtPath} ${quotedArgs.join(' ')}`
+            });
+          } else {
+            resolve({
+              success: false,
+              error: 'UBT_FAILED',
+              message: `UnrealBuildTool failed with code ${code}`,
+              output: stdout + truncatedNote,
+              errorOutput: stderr + truncatedNote,
+              command: `${ubtPath} ${quotedArgs.join(' ')}`
+            });
+          }
+        });
+
+        child.on('error', (err) => {
+          const quotedArgs = cmdArgs.map(arg => arg.includes(' ') ? `"${arg}"` : arg);
+
+          resolve({
+            success: false,
+            error: 'SPAWN_FAILED',
+            message: `Failed to spawn UnrealBuildTool: ${err.message}`,
+            command: `${ubtPath} ${quotedArgs.join(' ')}`
+          });
+        });
+      });
+    }
+    default:
+      const res = await executeAutomationRequest(tools, 'manage_pipeline', { ...args, subAction: action }, 'Automation bridge not available for manage_pipeline');
+      return cleanObject(res);
+  }
+}

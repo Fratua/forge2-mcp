@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "forge2": {
+      "command": "node",
+      "args": ["C:\\Users\\YourUsername\\Desktop\\Forge2_Unreal_mcp\\dist\\index.js"],
+      "env": {
+        "UE_PROJECT_PATH": "C:\\Users\\YourUsername\\Documents\\Unreal Projects\\YourProject",
+        "MCP_AUTOMATION_HOST": "127.0.0.1",
+        "MCP_AUTOMATION_PORT": "8091",
+        "LOG_LEVEL": "info",
+        "APPDATA": "C:\\Users\\YourUsername\\AppData\\Roaming"
+      }
+    }
+  }
+}

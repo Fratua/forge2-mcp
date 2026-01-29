@@ -1,0 +1,99 @@
+{
+  "name": "forge2-mcp-server",
+  "version": "1.0.0",
+  "mcpName": "io.github.forge2/unreal-game-dev",
+  "description": "Forge2: Ultimate AAA Game Development MCP Extension - The most comprehensive AI-assisted game development system for Unreal Engine 5. Supports 15+ game genres, complete AAA tech stack, full multiplayer/networking, procedural generation, combat systems, RPG stack, and more. Exclusively optimized for Claude Desktop with Claude Opus 4.5.",
+  "type": "module",
+  "module": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "forge2-mcp-server": "dist/cli.js",
+    "forge2": "dist/cli.js"
+  },
+  "files": [
+    "dist/**",
+    "server.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "claude_desktop_config.example.*.json",
+    "docs/CLAUDE_DESKTOP_SETUP.md"
+  ],
+  "scripts": {
+    "build:core": "tsc -p tsconfig.json",
+    "build": "npm run build:core",
+    "build:watch": "tsc -p tsconfig.json --watch",
+    "start": "node dist/cli.js",
+    "dev": "ts-node-esm src/cli.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "lint:cpp": "echo \"Running C/C++ lint (cpplint)\" && (python -m cpplint --recursive plugins || echo 'cpplint not found; skipping C/C++ lint')",
+    "clean": "rimraf dist",
+    "prepare": "npm run build",
+    "clean:tmp": "node scripts/clean-tmp.js",
+    "test": "node tests/integration.mjs",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:all": "node tests/integration.mjs",
+    "test:smoke": "node --loader ts-node/esm scripts/smoke-test.ts",
+    "type-check": "tsc --noEmit",
+    "prebuild": "npm run lint && npm run clean",
+    "setup": "node scripts/setup-claude-desktop.js",
+    "verify": "node scripts/verify-setup.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "unreal",
+    "unreal-engine",
+    "ue5",
+    "remote-control",
+    "automation",
+    "game-development",
+    "aaa-games",
+    "procedural-generation",
+    "world-building",
+    "rpg-systems",
+    "combat-systems",
+    "multiplayer",
+    "claude-desktop",
+    "claude-opus",
+    "ai-assisted-development",
+    "forge2"
+  ],
+  "author": "Forge2 Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.0",
+    "ajv": "^8.17.1",
+    "dotenv": "^17.2.3",
+    "mcp-client-capabilities": "^0.0.12",
+    "ws": "^8.18.3",
+    "zod": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.2",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.49.0",
+    "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.39.2",
+    "rimraf": "^6.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fratua/forge2-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/Fratua/forge2-mcp/issues"
+  },
+  "homepage": "https://github.com/Fratua/forge2-mcp#readme"
+}

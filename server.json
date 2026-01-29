@@ -1,0 +1,126 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.forge2/unreal-game-dev",
+  "description": "Forge2: Ultimate AAA Game Development MCP Extension for Unreal Engine 5 with comprehensive tools for game development automation.",
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "forge2-mcp-server",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "LOG_LEVEL",
+          "description": "Logging level: debug, info, warn, error (default: info)",
+          "isRequired": false,
+          "value": "info"
+        },
+        {
+          "name": "MCP_ROUTE_STDOUT_LOGS",
+          "description": "Route standard output to standard error to avoid protocol corruption (default: true)",
+          "isRequired": false,
+          "value": "true"
+        },
+        {
+          "name": "UE_PROJECT_PATH",
+          "description": "Absolute path to your Unreal .uproject file",
+          "isRequired": false,
+          "value": "C:/Users/YourName/Documents/Unreal Projects/YourProject"
+        },
+        {
+          "name": "UE_EDITOR_EXE",
+          "description": "Path to UnrealEditor-Cmd.exe (optional)",
+          "isRequired": false,
+          "value": ""
+        },
+        {
+          "name": "UE_SCREENSHOT_DIR",
+          "description": "Directory to save screenshots (optional)",
+          "isRequired": false,
+          "value": ""
+        },
+        {
+          "name": "MCP_AUTOMATION_PORT",
+          "description": "Automation bridge WebSocket port (default: 8091)",
+          "isRequired": false,
+          "value": "8091"
+        },
+        {
+          "name": "MCP_AUTOMATION_HOST",
+          "description": "Automation bridge WebSocket host (default: 127.0.0.1)",
+          "isRequired": false,
+          "value": "127.0.0.1"
+        },
+        {
+          "name": "MCP_AUTOMATION_CLIENT_MODE",
+          "description": "Run as client connecting to UE (false) or server listening for UE (true) (default: false)",
+          "isRequired": false,
+          "value": "false"
+        },
+        {
+          "name": "MCP_CONNECTION_TIMEOUT_MS",
+          "description": "Connection timeout in milliseconds (default: 5000)",
+          "isRequired": false,
+          "value": "5000"
+        },
+        {
+          "name": "MCP_REQUEST_TIMEOUT_MS",
+          "description": "Request timeout in milliseconds (default: 30000)",
+          "isRequired": false,
+          "value": "30000"
+        }
+      ]
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "unreal-engine",
+    "ue5",
+    "ue6",
+    "game-development",
+    "automation",
+    "3d",
+    "gamedev",
+    "cinematics",
+    "level-design",
+    "animation",
+    "physics",
+    "niagara",
+    "vfx",
+    "blueprint",
+    "lighting",
+    "rendering",
+    "play-in-editor",
+    "asset-management",
+    "actor-control",
+    "sequencer",
+    "production",
+    "audio",
+    "behavior-tree",
+    "input",
+    "performance",
+    "landscape",
+    "foliage",
+    "profiling",
+    "world-partition"
+  ],
+  "author": "Forge2 Development Team",
+  "homepage": "https://github.com/Fratua/forge2-mcp",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fratua/forge2-mcp.git",
+    "source": "github"
+  },
+  "bugs": {
+    "url": "https://github.com/Fratua/forge2-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
