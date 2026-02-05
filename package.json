@@ -69,17 +69,17 @@
   "author": "Forge2 Development Team",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.0",
+    "@modelcontextprotocol/sdk": "^1.26.0",
     "ajv": "^8.17.1",
     "dotenv": "^17.2.3",
-    "mcp-client-capabilities": "^0.0.12",
+    "mcp-client-capabilities": "^0.0.14",
     "ws": "^8.18.3",
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@types/node": "^25.0.2",
+    "@types/node": "^25.2.0",
     "@types/ws": "^8.18.1",
-    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.49.0",
     "@vitest/coverage-v8": "^4.0.16",
     "eslint": "^9.39.2",
